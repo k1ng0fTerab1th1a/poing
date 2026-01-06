@@ -50,7 +50,22 @@ public class Match
 
     public void UpdateGame(int gameOrder, int player1Score, int player2Score)
     {
+        Game game = _games.FirstOrDefault(g => g.OrderInMatch == gameOrder) 
+            ?? throw MatchException.GameNotFound(gameOrder);
 
+        game.SetScore(Score.Create(player1Score), Score.Create(player2Score));
+    }
+
+    public void DeleteGame(int gameOrder)
+    {
+        Game game = _games.FirstOrDefault(g => g.OrderInMatch == gameOrder)
+            ?? throw MatchException.GameNotFound(gameOrder);
+        _games.Remove(game);
+
+        foreach (var g in _games.Where(g => g.OrderInMatch > gameOrder).ToList())
+        {
+            g.DecrementOrder();
+        }
     }
 
     internal static Match Create(PlayerId player1, PlayerId player2, int gamesToWin)

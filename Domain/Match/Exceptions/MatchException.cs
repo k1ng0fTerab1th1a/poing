@@ -8,6 +8,11 @@ public class MatchException : DomainException
 
     internal static MatchException MatchIsFinished()
     {
-        return new MatchException("Can not add new game: the match is already finished.");
+        return new MatchException("Cannot add new game: the match is already finished.");
+    }
+
+    internal static MatchException GameNotFound(int gameOrder)
+    {
+        return new MatchException($"Game #{gameOrder} in match not found");
     }
 }
