@@ -22,7 +22,7 @@ public class Tournament
     public PlayerId CreatedBy { get; private set; }
     public MatchWinRule MatchWinRule { get; private set; }
     public TournamentFormat Format { get; private set; }
-    public IReadOnlyCollection<PlayerId> Participants => _participants.AsReadOnly();
+    public IReadOnlyList<PlayerId> Participants => _participants.AsReadOnly();
 
     public void UpdateName(TournamentName name)
     {
