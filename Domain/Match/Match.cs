@@ -9,17 +9,19 @@ public class Match
 {
     private readonly IList<Game> _games = [];
 
-    private Match(PlayerId player1, PlayerId player2, int gamesToWin)
+    private Match(PlayerId player1, PlayerId player2, int gamesToWin, int numberInTournament)
     {
         Player1 = player1;
         Player2 = player2;
         GamesToWin = gamesToWin;
+        NumberInTournament = numberInTournament;
     }
 
     public MatchId? Id { get; private set; }
     public PlayerId Player1 { get; private set; }
     public PlayerId Player2 { get; private set; }
     public int GamesToWin { get; private set; }
+    public int NumberInTournament { get; }
     public IReadOnlyCollection<Game> Games => _games.OrderBy(g => g.OrderInMatch).ToList().AsReadOnly();
     private bool IsFinished => Winner != null;
 
@@ -68,13 +70,17 @@ public class Match
         }
     }
 
-    internal static Match Create(PlayerId player1, PlayerId player2, int gamesToWin)
+    internal static Match Create(PlayerId player1, PlayerId player2, int gamesToWin, int numberInTournament)
     {
         if (gamesToWin < 1)
         {
             throw InvalidGamesToWinException.NotPositive(gamesToWin);
         }
+        if (numberInTournament < 1)
+        {
+            throw InvalidNumberInTournamentException.NotPositive(numberInTournament);
+        }
 
-        return new Match(player1, player2, gamesToWin);
+        return new Match(player1, player2, gamesToWin, numberInTournament); 
     }
 }
