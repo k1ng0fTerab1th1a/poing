@@ -49,6 +49,16 @@ public class Tournament
         _participants.Add(participant);
     }
 
+    public void RemoveParticipant(PlayerId participant)
+    {
+        if (!_participants.Contains(participant))
+        {
+            throw TournamentParticipantsException.ParticipantNotFound();
+        }
+
+        _participants.Remove(participant);
+    }
+
     public static Tournament Create(TournamentName name, MatchWinRule matchWinRule, TournamentFormat format, PlayerId creatorId)
     {
         return new Tournament(name, matchWinRule, format, creatorId);
