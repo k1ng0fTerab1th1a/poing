@@ -47,7 +47,7 @@ public class Match
         {
             throw MatchException.MatchIsFinished();
         }
-        _games.Add(Game.Create(Score.Create(player1Score), Score.Create(player2Score), _games.Count, this));
+        _games.Add(Game.Create(Score.Create(player1Score), Score.Create(player2Score), _games.Count + 1, this));
     }
 
     public void UpdateGame(int gameOrder, int player1Score, int player2Score)

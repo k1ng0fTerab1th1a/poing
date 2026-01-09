@@ -6,10 +6,10 @@ public class InvalidOrderInMatchException : DomainException
 {
     private InvalidOrderInMatchException(string message) : base(message) { }
 
-    internal static InvalidOrderInMatchException Negative(int orderInMatch)
+    internal static InvalidOrderInMatchException NotPositive(int orderInMatch)
     {
         return new InvalidOrderInMatchException($"{orderInMatch} is not a valid order for a game:" +
-            $" it must be non-negative.");
+            $" it must be positive.");
     }
 
     internal static InvalidOrderInMatchException CannotChange(int orderInMatchOld, int orderInMatchNew)

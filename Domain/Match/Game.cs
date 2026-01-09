@@ -21,12 +21,12 @@ public class Game
     public GameId? Id { get; private set; }
     public Score Player1Score { get; private set; }
     public Score Player2Score { get; private set; }
-    public int OrderInMatch { get; private set; } // zero-based
+    public int OrderInMatch { get; private set; } // one-based
     public Match Match { get; private set; }
 
     internal PlayerId Winner => Player1Score.Value > Player2Score.Value ? Match.Player1 : Match.Player2;
 
-    public void SetScore(Score player1Score, Score player2Score)
+    internal void SetScore(Score player1Score, Score player2Score)
     {
         ValidateScore(player1Score, player2Score);
         Player1Score = player1Score;
@@ -35,7 +35,7 @@ public class Game
 
     internal void DecrementOrder()
     {
-        if (OrderInMatch == 0)
+        if (OrderInMatch == 1)
         {
             throw InvalidOrderInMatchException.CannotChange(OrderInMatch, OrderInMatch - 1);
         }
@@ -45,9 +45,9 @@ public class Game
 
     internal static Game Create(Score player1Score, Score player2Score, int orderInMatch, Match match)
     {
-        if (orderInMatch < 0)
+        if (orderInMatch < 1)
         {
-            throw InvalidOrderInMatchException.Negative(orderInMatch);
+            throw InvalidOrderInMatchException.NotPositive(orderInMatch);
         }
         ValidateScore(player1Score, player2Score);
 
