@@ -1,12 +1,26 @@
 ﻿namespace Domain.Tournament;
 
-public sealed record TournamentFormat
+public record TournamentFormat
 {
-    private readonly byte _value;
-    private TournamentFormat(byte value)
+    private static readonly Dictionary<int, TournamentFormat> _all;
+
+    static TournamentFormat()
     {
-        _value = value;
+        _all = (new TournamentFormat[] { RoundRobin })
+            .ToDictionary(x => x.Value);
     }
 
-    public static readonly TournamentFormat RoundRobin = new(0);
+    private TournamentFormat(int value)
+    {
+        Value = value;
+    }
+
+    public int Value { get; }
+
+    public static readonly TournamentFormat RoundRobin = new(1);
+
+    public static TournamentFormat? FromValue(int value)
+    {
+        return _all.GetValueOrDefault(value);
+    }
 }

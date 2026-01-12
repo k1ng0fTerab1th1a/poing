@@ -1,4 +1,4 @@
-﻿namespace Domain.Tournament.Services.TournamentPlanGenerator;
+﻿namespace Domain.Tournament.TournamentPlanGenerator;
 
 public interface ITournamentPlanGenerator
 {

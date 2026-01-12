@@ -1,6 +1,7 @@
 ﻿using Domain.Player;
+using Domain.Tournament.TournamentPlanGenerator;
 
-namespace Domain.Tournament.Services.TournamentPlanGenerator.RoundRobin;
+namespace Domain.Tournament.TournamentPlanGenerator.RoundRobin;
 
 public class RoundRobinTournamentPlanGenerator : ITournamentPlanGenerator
 {
