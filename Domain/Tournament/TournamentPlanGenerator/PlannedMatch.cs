@@ -1,7 +1,7 @@
 ﻿using Domain.Match.Exceptions;
 using Domain.Player;
 
-namespace Domain.Tournament.Services.TournamentPlanGenerator;
+namespace Domain.Tournament.TournamentPlanGenerator;
 
 public record PlannedMatch
 {
