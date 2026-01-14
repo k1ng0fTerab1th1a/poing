@@ -1,5 +1,4 @@
-﻿using Domain.Player;
-using Domain.Shared;
+﻿using Domain.Shared;
 
 namespace Domain.Tournament.Exceptions;
 
