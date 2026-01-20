@@ -2,12 +2,14 @@
 
 public record MatchWinRule
 {
-    private static readonly Dictionary<int, MatchWinRule> _all;
+    private static readonly Dictionary<int, MatchWinRule> _allByValue;
+    private static readonly Dictionary<string, MatchWinRule> _allByName;
 
     static MatchWinRule()
     {
-        _all = (new MatchWinRule[] { BestOf1, BestOf3, BestOf5, BestOf7 })
-            .ToDictionary(x => x.GamesToWin);
+        MatchWinRule[] _all = [BestOf1, BestOf3, BestOf5, BestOf7];
+        _allByValue = _all.ToDictionary(x => x.GamesToWin);
+        _allByName = _all.ToDictionary(x => nameof(x));
     }
 
     private MatchWinRule(int gamesToWin)
@@ -24,6 +26,11 @@ public record MatchWinRule
 
     public static MatchWinRule? FromValue(int value)
     {
-        return _all.GetValueOrDefault(value);
+        return _allByValue.GetValueOrDefault(value);
+    }
+
+    public static MatchWinRule? FromName(string name)
+    {
+        return _allByName.GetValueOrDefault(name);
     }
 }

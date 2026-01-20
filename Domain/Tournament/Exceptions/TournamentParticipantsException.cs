@@ -13,6 +13,6 @@ internal class TournamentParticipantsException : DomainException
 
     internal static TournamentParticipantsException ParticipantNotFound()
     {
-        return new TournamentParticipantsException("Participant not found.")
+        return new TournamentParticipantsException("Participant not found.");
     }
 }

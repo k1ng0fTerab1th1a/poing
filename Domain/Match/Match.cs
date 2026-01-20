@@ -15,7 +15,7 @@ public class Match
         Player1 = player1;
         Player2 = player2;
         GamesToWin = gamesToWin;
-        TournamentId = tournamentId
+        TournamentId = tournamentId;
         NumberInTournament = numberInTournament;
     }
 

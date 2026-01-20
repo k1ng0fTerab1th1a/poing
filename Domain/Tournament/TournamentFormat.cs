@@ -2,12 +2,14 @@
 
 public record TournamentFormat
 {
-    private static readonly Dictionary<int, TournamentFormat> _all;
+    private static readonly Dictionary<int, TournamentFormat> _allByValue;
+    private static readonly Dictionary<string, TournamentFormat> _allByName;
 
     static TournamentFormat()
     {
-        _all = (new TournamentFormat[] { RoundRobin })
-            .ToDictionary(x => x.Value);
+        TournamentFormat[] _all = [RoundRobin];
+        _allByValue = _all.ToDictionary(x => x.Value);
+        _allByName = _all.ToDictionary(x => nameof(x));
     }
 
     private TournamentFormat(int value)
@@ -21,6 +23,11 @@ public record TournamentFormat
 
     public static TournamentFormat? FromValue(int value)
     {
-        return _all.GetValueOrDefault(value);
+        return _allByValue.GetValueOrDefault(value);
+    }
+
+    public static TournamentFormat? FromName(string name)
+    {
+        return _allByName.GetValueOrDefault(name);
     }
 }
