@@ -1,36 +1,39 @@
-﻿namespace Domain.Tournament;
+﻿using Domain.Shared;
 
-public record MatchWinRule
+namespace Domain.Tournament;
+
+public abstract class MatchWinRule : Enumeration<MatchWinRule>
 {
-    private static readonly Dictionary<int, MatchWinRule> _allByValue;
-    private static readonly Dictionary<string, MatchWinRule> _allByName;
+    private MatchWinRule(int value, string name) : base(value, name) { }
 
-    static MatchWinRule()
+    public abstract int GamesToWin { get; }
+
+    public static readonly MatchWinRule BestOf1 = new BestOf1MatchWinRule();
+    public static readonly MatchWinRule BestOf3 = new BestOf3MatchWinRule();
+    public static readonly MatchWinRule BestOf5 = new BestOf5MatchWinRule();
+    public static readonly MatchWinRule BestOf7 = new BestOf7MatchWinRule();
+
+    private class BestOf1MatchWinRule : MatchWinRule
     {
-        MatchWinRule[] _all = [BestOf1, BestOf3, BestOf5, BestOf7];
-        _allByValue = _all.ToDictionary(x => x.GamesToWin);
-        _allByName = _all.ToDictionary(x => nameof(x));
+        public BestOf1MatchWinRule() : base(1, "BestOf1") { }
+        public override int GamesToWin => 1;
     }
 
-    private MatchWinRule(int gamesToWin)
+    private class BestOf3MatchWinRule : MatchWinRule
     {
-        GamesToWin = gamesToWin;
+        public BestOf3MatchWinRule() : base(2, "BestOf3") { }
+        public override int GamesToWin => 2;
     }
 
-    public int GamesToWin { get; }
-
-    public static readonly MatchWinRule BestOf1 = new(1);
-    public static readonly MatchWinRule BestOf3 = new(2);
-    public static readonly MatchWinRule BestOf5 = new(3);
-    public static readonly MatchWinRule BestOf7 = new(4);
-
-    public static MatchWinRule? FromValue(int value)
+    private class BestOf5MatchWinRule : MatchWinRule
     {
-        return _allByValue.GetValueOrDefault(value);
+        public BestOf5MatchWinRule() : base(3, "BestOf5") { }
+        public override int GamesToWin => 3;
     }
 
-    public static MatchWinRule? FromName(string name)
+    private class BestOf7MatchWinRule : MatchWinRule
     {
-        return _allByName.GetValueOrDefault(name);
+        public BestOf7MatchWinRule() : base(4, "BestOf7") { }
+        public override int GamesToWin => 4;
     }
 }
