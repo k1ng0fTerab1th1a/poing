@@ -1,13 +1,15 @@
 ﻿using Domain.Player;
 
-namespace Domain.Tournament.TournamentPlanGenerator.RoundRobin;
+namespace Domain.Tournament.Format;
 
-public class RoundRobinTournamentPlanGenerator : ITournamentPlanGenerator
+internal class RoundRobinTournamentFormat : TournamentFormat
 {
+    public RoundRobinTournamentFormat() : base(1, "RoundRobin") { }
+
     /// <summary>
     /// Implementation of <a href="https://en.wikipedia.org/wiki/Round-robin_tournament#Berger_tables">Berger tables</a>
     /// </summary>
-    public IList<PlannedMatch> GenerateMatches(Tournament tournament)
+    internal override IList<PlannedMatch> GenerateMatches(Tournament tournament)
     {
         IReadOnlyList<PlayerId> participants = tournament.Participants;
         int n = participants.Count;
