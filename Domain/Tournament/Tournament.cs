@@ -12,7 +12,7 @@ public class Tournament
     private enum State
     {
         Planning,
-        OnGoing,
+        InProgress,
         Finished
     }
 
@@ -34,6 +34,13 @@ public class Tournament
     public PlayerId CreatedBy { get; private set; }
     public MatchWinRule MatchWinRule { get; private set; }
     public TournamentFormat Format { get; private set; }
+    public string StateName => _state switch
+    {
+        State.Planning => "Planning",
+        State.InProgress => "InProgress",
+        State.Finished => "Finished",
+        _ => throw new InvalidOperationException()
+    };
     public IReadOnlyList<PlayerId> Participants => _participants.AsReadOnly();
 
     public IList<PlannedMatch> Start()
@@ -48,7 +55,7 @@ public class Tournament
             throw TournamentException.NotEnoughParticipants(Participants.Count, MIN_PARTICIPANTS);
         }
 
-        _state = State.OnGoing;
+        _state = State.InProgress;
         return Format.GenerateMatches(this);
     }
 
