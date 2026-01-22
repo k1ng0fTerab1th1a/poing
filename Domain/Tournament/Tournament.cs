@@ -1,5 +1,6 @@
 ﻿using Domain.Player;
 using Domain.Tournament.Exceptions;
+using Domain.Tournament.Format;
 
 namespace Domain.Tournament;
 
@@ -7,14 +8,25 @@ public record TournamentId(int Value);
 
 public class Tournament
 {
+    private const int MIN_PARTICIPANTS = 4;
+    private enum State
+    {
+        Planning,
+        OnGoing,
+        Finished
+    }
+
+    private State _state;
+
     private readonly IList<PlayerId> _participants = [];
 
-    private Tournament(TournamentName name, MatchWinRule matchWinRule, TournamentFormat format, PlayerId creatorId)
+    private Tournament(TournamentName name, MatchWinRule matchWinRule, TournamentFormat format, PlayerId creatorId, State state)
     {
         Name = name;
         MatchWinRule = matchWinRule;
         Format = format;
         CreatedBy = creatorId;
+        _state = state;
     }
 
     public TournamentId? Id { get; private set; }
@@ -24,6 +36,22 @@ public class Tournament
     public TournamentFormat Format { get; private set; }
     public IReadOnlyList<PlayerId> Participants => _participants.AsReadOnly();
 
+    public IList<PlannedMatch> Start()
+    {
+        if (_state != State.Planning)
+        {
+            throw TournamentException.AlreadyStarted();
+        }
+
+        if (Participants.Count < MIN_PARTICIPANTS)
+        {
+            throw TournamentException.NotEnoughParticipants(Participants.Count, MIN_PARTICIPANTS);
+        }
+
+        _state = State.OnGoing;
+        return Format.GenerateMatches(this);
+    }
+
     public void UpdateName(TournamentName name)
     {
         Name = name;
@@ -31,16 +59,31 @@ public class Tournament
 
     public void UpdateMatchWinRule(MatchWinRule matchWinRule)
     {
+        if (_state != State.Planning)
+        {
+            throw TournamentException.AlreadyStarted();
+        }
+
         MatchWinRule = matchWinRule;
     }
 
     public void UpdateFormat(TournamentFormat format)
     {
+        if (_state != State.Planning)
+        {
+            throw TournamentException.AlreadyStarted();
+        }
+
         Format = format;
     }
 
     public void AddParticipant(PlayerId participant)
     {
+        if (_state != State.Planning)
+        {
+            throw TournamentException.AlreadyStarted();
+        }
+
         if (_participants.Contains(participant))
         {
             throw TournamentParticipantsException.AlreadyExists();
@@ -51,6 +94,11 @@ public class Tournament
 
     public void RemoveParticipant(PlayerId participant)
     {
+        if (_state != State.Planning)
+        {
+            throw TournamentException.AlreadyStarted();
+        }
+
         if (!_participants.Contains(participant))
         {
             throw TournamentParticipantsException.ParticipantNotFound();
@@ -61,7 +109,7 @@ public class Tournament
 
     public static Tournament Create(TournamentName name, MatchWinRule matchWinRule, TournamentFormat format, PlayerId creatorId)
     {
-        return new Tournament(name, matchWinRule, format, creatorId);
+        return new Tournament(name, matchWinRule, format, creatorId, State.Planning);
     }
 }
 

@@ -2,6 +2,7 @@
 using Application.TournamentService.DTOs;
 using Domain.Player;
 using Domain.Tournament;
+using Domain.Tournament.Format;
 
 namespace Application.TournamentService;
 
