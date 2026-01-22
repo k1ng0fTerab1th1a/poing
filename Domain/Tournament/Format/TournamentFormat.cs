@@ -1,10 +1,12 @@
 ﻿using Domain.Shared;
 
-namespace Domain.Tournament;
+namespace Domain.Tournament.Format;
 
-public class TournamentFormat : Enumeration<TournamentFormat>
+public abstract class TournamentFormat : Enumeration<TournamentFormat>
 {
-    private TournamentFormat(int value, string name) : base(value, name) { }
+    protected internal TournamentFormat(int value, string name) : base(value, name) { }
 
-    public static readonly TournamentFormat RoundRobin = new(1, "RoundRobin");
+    internal abstract IList<PlannedMatch> GenerateMatches(Tournament tournament);
+
+    public static readonly TournamentFormat RoundRobin = new RoundRobinTournamentFormat();
 }
