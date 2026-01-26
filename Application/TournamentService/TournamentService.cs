@@ -11,7 +11,7 @@ public class TournamentService(ITournamentRepository repository, IUnitOfWork uni
     private readonly ITournamentRepository _repository = repository;
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
-    public async Task<TournamentId> Create(CreateTournamentRequest createTournamentRequest, PlayerId createdBy)
+    public async Task<int> CreateAsync(CreateTournamentRequest createTournamentRequest, int createdByPlayerId)
     {
         MatchWinRule matchWinRule = MatchWinRule.FromName(createTournamentRequest.MatchWinRule) 
             ?? throw ValidationException.InvalidValue(nameof(createTournamentRequest.MatchWinRule), createTournamentRequest.MatchWinRule);
@@ -20,15 +20,36 @@ public class TournamentService(ITournamentRepository repository, IUnitOfWork uni
             ?? throw ValidationException.InvalidValue(nameof(createTournamentRequest.Format), createTournamentRequest.Format);
 
         Tournament tournament = Tournament.Create(
-            TournamentName.Create(createTournamentRequest.TournamentName),
+            TournamentName.Create(createTournamentRequest.Name),
             matchWinRule,
             tournamentFormat,
-            createdBy
+            new PlayerId(createdByPlayerId)
         );
 
         await _repository.AddAsync(tournament);
         await _unitOfWork.CommitAsync();
 
-        return tournament.Id!;
+        return tournament.Id!.Value;
+    }
+
+    public async Task<TournamentResponse?> GetByIdAsync(int id)
+    {
+        Tournament? tournament = await _repository.GetByIdAsync(new TournamentId(id));
+
+        if (tournament == null)
+        {
+            return null;
+        }
+
+        return new TournamentResponse
+        {
+            Id = tournament.Id!.Value,
+            Name = tournament.Name.Value,
+            CreatedBy = tournament.CreatedBy.Value,
+            MatchWinRule = tournament.MatchWinRule.Name,
+            Format = tournament.Format.Name,
+            State = tournament.StateName,
+            Participants = tournament.Participants.Select(playerId => playerId.Value),
+        };
     }
 }

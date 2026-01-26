@@ -1,7 +1,5 @@
 ﻿using Application.TournamentService;
 using Application.TournamentService.DTOs;
-using Domain.Player;
-using Domain.Tournament;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers;
@@ -14,21 +12,28 @@ public class TournamentsController(TournamentService service, ILogger<Tournament
     private readonly ILogger<TournamentsController> _logger = logger;
 
     [HttpGet("{id}", Name = "GetTournamentById")]
-    public Task Get(TournamentId id)
+    public async Task<ActionResult<TournamentResponse>> Get(int id)
     {
-        throw new NotImplementedException();
+        TournamentResponse? tournamentResponse = await _service.GetByIdAsync(id);
+
+        if (tournamentResponse == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(tournamentResponse);
     }
 
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] CreateTournamentRequest createTournamentRequest)
     {
-        _logger.LogInformation("request received: {name}, {matchwinrule}, {format}", 
-            createTournamentRequest.TournamentName, 
-            createTournamentRequest.MatchWinRule, 
+        _logger.LogInformation("request received: {name}, {matchwinrule}, {format}",
+            createTournamentRequest.Name,
+            createTournamentRequest.MatchWinRule,
             createTournamentRequest.Format);
 
-        TournamentId id = await _service.Create(createTournamentRequest, new PlayerId(1));
+        int id = await _service.CreateAsync(createTournamentRequest, 1);
 
-        return CreatedAtRoute("GetTournamentById", id);
+        return CreatedAtAction(nameof(Get), new { id }, null);
     }
 }
