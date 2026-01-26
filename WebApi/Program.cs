@@ -1,6 +1,7 @@
 using Application.Shared;
 using Application.TournamentService;
 using Domain.Tournament;
+using WebApi.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +11,9 @@ builder.Services.AddOpenApi();
 builder.Services.AddTransient<TournamentService>();
 builder.Services.AddTransient<ITournamentRepository, TournRepoMock>();
 builder.Services.AddTransient<IUnitOfWork, UoWMock>();
+
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
 
 var app = builder.Build();
 
@@ -25,6 +29,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseExceptionHandler();
+
 app.UseAuthorization();
 
 app.MapControllers();
@@ -36,6 +42,8 @@ class TournRepoMock : ITournamentRepository
     public async Task AddAsync(Tournament tournament)
     {
         Console.WriteLine("AddAsync called.");
+        var prop = tournament.GetType().GetProperty(nameof(tournament.Id));
+        prop!.SetValue(tournament, new TournamentId(1));
         await Task.CompletedTask;
     }
 
