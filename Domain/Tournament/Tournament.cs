@@ -20,12 +20,12 @@ public class Tournament
 
     private readonly IList<PlayerId> _participants = [];
 
-    private Tournament(TournamentName name, MatchWinRule matchWinRule, TournamentFormat format, PlayerId creatorId, State state)
+    private Tournament(TournamentName name, MatchWinRule matchWinRule, TournamentFormat format, PlayerId createdBy, State state)
     {
         Name = name;
         MatchWinRule = matchWinRule;
         Format = format;
-        CreatedBy = creatorId;
+        CreatedBy = createdBy;
         _state = state;
     }
 
