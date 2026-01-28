@@ -26,7 +26,7 @@ public class TournamentService(ITournamentRepository repository, IUnitOfWork uni
             new PlayerId(createdByPlayerId)
         );
 
-        await _repository.AddAsync(tournament);
+        _repository.Add(tournament);
         await _unitOfWork.CommitAsync();
 
         return tournament.Id!.Value;

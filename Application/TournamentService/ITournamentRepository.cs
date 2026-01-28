@@ -4,7 +4,7 @@ namespace Application.TournamentService;
 
 public interface ITournamentRepository
 {
-    public Task AddAsync(Tournament tournament);
+    public void Add(Tournament tournament);
     public Task<Tournament?> GetByIdAsync(TournamentId tournamentId);
-    public Task RemoveAsync(TournamentId tournamentId);
+    public void Remove(Tournament tournament);
 }
