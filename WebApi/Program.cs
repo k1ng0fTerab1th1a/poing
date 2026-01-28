@@ -1,16 +1,24 @@
 using Application.Shared;
 using Application.TournamentService;
 using Domain.Tournament;
+using Infrastructure.Persistence;
+using Infrastructure.Persistence.Tournaments;
+using Microsoft.EntityFrameworkCore;
 using WebApi.Middleware;
 
+string conString = "server=localhost;user=EXAMPLE_USER;password=EXAMPLE_PASSWORD;database=poing_dev";
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
+builder.Services.AddDbContext<PoingDbContext>(options =>
+{
+    options.UseMySql(conString, ServerVersion.AutoDetect(conString));
+});
 
 builder.Services.AddTransient<TournamentService>();
-builder.Services.AddTransient<ITournamentRepository, TournRepoMock>();
-builder.Services.AddTransient<IUnitOfWork, UoWMock>();
+builder.Services.AddTransient<ITournamentRepository, TournamentRepository>();
+builder.Services.AddScoped<IUnitOfWork>(provider => provider.GetRequiredService<PoingDbContext>());
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
@@ -39,12 +47,11 @@ app.Run();
 
 class TournRepoMock : ITournamentRepository
 {
-    public async Task AddAsync(Tournament tournament)
+    public void Add(Tournament tournament)
     {
         Console.WriteLine("AddAsync called.");
         var prop = tournament.GetType().GetProperty(nameof(tournament.Id));
         prop!.SetValue(tournament, new TournamentId(1));
-        await Task.CompletedTask;
     }
 
     public Task<Tournament?> GetByIdAsync(TournamentId tournamentId)
@@ -53,10 +60,9 @@ class TournRepoMock : ITournamentRepository
         return Task.FromResult<Tournament?>(null);
     }
 
-    public async Task RemoveAsync(TournamentId tournamentId)
+    public void Remove(Tournament tournament)
     {
         Console.WriteLine("RemoveAsync called.");
-        await Task.CompletedTask;
     }
 }
 
