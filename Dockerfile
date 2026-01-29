@@ -1,12 +1,13 @@
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build_stage
 WORKDIR /app
 
-COPY ./Poing.sln .
-COPY --parents ./*/*.csproj .
+COPY --parents ./src/Poing.sln .
+COPY --parents ./src/*/*.csproj .
+WORKDIR /app/src
 RUN dotnet restore
 
-COPY . .
-RUN dotnet publish ./WebApi/WebApi.csproj -c Release -o publish/ --no-restore
+COPY ./src/ .
+RUN dotnet publish ./WebApi/WebApi.csproj -c Release -o ../publish/ --no-restore
 
 FROM mcr.microsoft.com/dotnet/aspnet:9.0
 WORKDIR /app
