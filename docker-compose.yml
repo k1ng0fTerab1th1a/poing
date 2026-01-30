@@ -7,6 +7,10 @@ services:
       - ASPNETCORE_URLS=http://+:5069
     ports: 
       - "${APP_PORT:-5069}:5069"
+    depends_on:
+      db:
+        condition: service_healthy
+        restart: true
   
 
   db:
@@ -16,6 +20,11 @@ services:
       - MYSQL_DATABASE=poing_dev
     ports:
       - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping"]
+      interval: 5s
+      timeout: 10s
+      retries: 6
     volumes:
       - db_data:/var/lib/mysql
 

@@ -34,6 +34,20 @@ if (app.Environment.IsDevelopment())
         options.SwaggerEndpoint("/openapi/v1.json", "v1");
         options.RoutePrefix = "";
     });
+
+    using (IServiceScope scope = app.Services.CreateScope())
+    {
+        try
+        {
+            PoingDbContext dbContext = scope.ServiceProvider.GetRequiredService<PoingDbContext>();
+            dbContext.Database.Migrate();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Migration failed: {ex.Message}");
+            throw;
+        }
+    }
 }
 
 app.UseHttpsRedirection();
